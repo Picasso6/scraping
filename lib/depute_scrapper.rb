@@ -4,6 +4,12 @@ require 'open-uri'
 
 list_depute = Nokogiri::HTML(open("http://www2.assemblee-nationale.fr/deputes/liste/alphabetique"))
 
+#CAS PARTICULIER : OBTENIR LE MAIL D'UN DÉPUTÉ UNIQUEMENT
+# id_card = Nokogiri::HTML(open("http://www2.assemblee-nationale.fr/deputes/fiche/OMC_PA720568"))
+# mail = id_card.xpath('/html/body/div[3]/div/div/div/section[1]/div/article/div[3]/div/dl/dd[4]/ul/li[1]/a').attr('href')
+# mail = mail.to_s[7..-1]
+# puts mail
+
 #OBTENTION DES NOMS DE DÉPUTÉS
 def get_name_depute(annuaire)
   name_depute =[]
@@ -18,33 +24,7 @@ def get_name_depute(annuaire)
   end
   return name_depute
 end
-
 #puts get_name_depute(list_depute).inspect
-
-#METHODE 1 (DEDUCTION DES MAILS)
-# final_arr = []
-# get_name_depute(list_depute).each do |e|
-#   arr = e.split
-#   first_name = arr[0]
-#   last_name = ""
-#   mailbegin= "#{first_name}."
-#   arr[1..-1].each do |i|
-#     last_name << i
-#     last_name << " "
-#     mailbegin << i
-#   end
-#   final_arr << { "first_name" => "#{first_name}",
-#   	             "last_name" => "#{last_name[0..-2]}",
-#                   "email" => "#{mailbegin.downcase}@assemblee-nationale.fr" , }
-# end
-#
-# puts final_arr.inspect
-
-#CAS PARTICULIER : OBTENIR LE MAIL D'UN DÉPUTÉ UNIQUEMENT
-# id_card = Nokogiri::HTML(open("http://www2.assemblee-nationale.fr/deputes/fiche/OMC_PA720568"))
-# mail = id_card.xpath('/html/body/div[3]/div/div/div/section[1]/div/article/div[3]/div/dl/dd[4]/ul/li[1]/a').attr('href')
-# mail = mail.to_s[7..-1]
-# puts mail
 
 #OBTENTION DES URLS RELATIFS AUX FICHES PERSONNELLES DES DÉPUTÉS
 def get_depute_url(annuaire)
@@ -56,6 +36,29 @@ def get_depute_url(annuaire)
   return depute_list_url
 end
 #puts get_depute_url(list_depute)
+
+#METHODE 1 (DEDUCTION DES MAILS)-------------------------------------------------------------------------------------
+def botin_depute1(annuaire)
+  final_arr = []
+  get_name_depute(annuaire).each do |e|
+    arr = e.split
+    first_name = arr[0]
+    last_name = ""
+    mailbegin= "#{first_name}."
+    arr[1..-1].each do |i|
+      last_name << i
+      last_name << " "
+      mailbegin << i
+    end
+    final_arr << { "first_name" => "#{first_name}",
+    	             "last_name" => "#{last_name[0..-2]}",
+                    "email" => "#{mailbegin.downcase}@assemblee-nationale.fr" , }
+  end
+  return final_arr
+end
+puts botin_depute1(list_depute).inspect
+
+#METHODE 2 (SCRAPPING DES MAILS) [**ATTENTION TEMPS DE CHARGEMENT LONG !**]-------------------------------------------------------------------
 
 #OBTENTION LES MAILS DES DÉPUTÉS (NÉCESSITE L'ACTIVATION DE get_depute_url)
 def get_mail_depute(annuaire)
@@ -75,8 +78,7 @@ def get_mail_depute(annuaire)
 end
 #puts get_mail_depute(list_depute)
 
-#METHODE 2 (SCRAPPING DES MAILS)
-def bottin(annuaire)
+def bottin_depute2(annuaire)
   correspondance = get_name_depute(annuaire).zip(get_mail_depute(annuaire))
   final_array = []
   correspondance.each do |e|
@@ -84,4 +86,5 @@ def bottin(annuaire)
   end
 return final_array
 end
-puts bottin(list_depute).inspect
+
+#puts bottin_depute2(list_depute).inspect

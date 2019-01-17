@@ -1,0 +1,11 @@
+require_relative '../lib/townhall_email'
+
+describe "the get_town_list_mail method" do
+	noko = Nokogiri::HTML(open('http://annuaire-des-mairies.com/val-d-oise.html'))
+	it "countains Ableiges" do
+		expect(get_town_list_mail(noko).any? {"ABLEIGES"==nil}).to eq(false)
+	end
+	it "should be an array" do
+	expect(get_city_email_final(noko).instance_of?Array).to eq(true)
+	end
+end
