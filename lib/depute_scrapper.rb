@@ -56,7 +56,7 @@ def botin_depute1(annuaire)
   end
   return final_arr
 end
-#puts botin_depute1(list_depute).inspect
+puts botin_depute1(list_depute).inspect
 
 #METHODE 2 (SCRAPPING DES MAILS) [**ATTENTION TEMPS DE CHARGEMENT LONG !**]-------------------------------------------------------------------
 
@@ -87,4 +87,4 @@ def bottin_depute2(annuaire)
 return final_array
 end
 
-puts bottin_depute2(list_depute).inspect
+#puts bottin_depute2(list_depute).inspect
